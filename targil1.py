@@ -1,3 +1,5 @@
+# Shirel Sananes-
+
 # Question 1.a
 def get_penta_num(n):
     return n * (3 * n - 1) // 2
@@ -77,3 +79,4 @@ apply_functions = lambda numbers, funcs: dict(
 )
 
 # Question 5
+
