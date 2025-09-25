@@ -84,4 +84,85 @@ def sortedzip_tail(lists):
         return helper(acc + [sorted(remaining[0])], remaining[1:])
     return helper([], lists)
 
-# Question 6.1
+# Lazy Evaluation, Generators
+# Question 1
+def build_array_eager():
+    start = time.time()
+    arr = list(range(10001))
+    end = time.time()
+    print("זמן יצירה (eager):", end - start)
+    print("גודל בזיכרון:", sys.getsizeof(arr))
+    print("type:", type(arr))
+    return arr
+
+def build_array_lazy():
+    start = time.time()
+    arr = (i for i in range(10001))
+    end = time.time()
+    print("זמן יצירה (lazy):", end - start)
+    print("גודל בזיכרון:", sys.getsizeof(arr))
+    print("type:", type(arr))
+    return arr
+
+def first_half_eager():
+    full = list(range(10001))
+    start = time.time()
+    arr = full[:5000]
+    end = time.time()
+    print("זמן חיתוך (eager):", end - start)
+    print("גודל בזיכרון:", sys.getsizeof(arr))
+    print("type:", type(arr))
+    return arr
+
+def first_half_lazy():
+    full = (i for i in range(10001))
+    start = time.time()
+    arr = islice(full, 5000)
+    end = time.time()
+    print("זמן חיתוך (lazy):", end - start)
+    print("גודל בזיכרון:", sys.getsizeof(arr))
+    print("type:", type(arr))
+    return arr
+
+# Question 2 // פתרון רקורסיבי - פונקציונלי 
+def prime_generator_recursive(start=2):
+    
+    def is_prime(n, divisor=2):
+        if n < 2:
+            return False
+        if divisor * divisor > n:
+            return True
+        if n % divisor == 0:
+            return False
+        return is_prime(n, divisor + 1)
+
+    if is_prime(start):
+        yield start
+
+    # קריאה רקורסיבית להמשך
+    yield from prime_generator_recursive(start + 1)
+
+# Question 3 
+def taylor_series_recursive(x, k=0, term=1.0, sum_so_far=0.0):
+    sum_so_far += term
+    yield sum_so_far 
+
+    # קריאה רקורסיבית עם האיבר הבא: x^(k+1)/(k+1)!
+    yield from taylor_series_recursive(x, k + 1, term * x / (k + 1), sum_so_far)
+
+ """
+x = 2
+gen = taylor_series_recursive(x)
+
+for _ in range(8):
+    print(next(gen))
+פלט:
+1.0
+3.0
+5.0
+6.333333333333333
+7.0
+7.266666666666667
+7.355555555555555
+7.3809523809523805
+ """
