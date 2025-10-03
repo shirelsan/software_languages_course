@@ -1,101 +1,59 @@
-from functools import reduce
-import operator
-import time
 
-# Question 1.a
-linear = lambda x: 2 + 2 * x 
+split(N,R,R1):-
+    N>=1,
+    N1 is mod(N,10),
+    N2 is N//10,
+    split(N2,[N1|R],R1).
+split(_,X,X).
+split(N,Res):-
+    split(N,[],Res).
 
-# Question 1.b
-nums = range(0, 10001)
-mapped_tuple = tuple(map(linear, nums))
+creat(L,N):-
+    creat(L,0,N).
+creat([X|Y],N1,N):-
+    length(Y,L2),
+    N2 is N1+(X*(10**(L2))),
+    creat(Y,N2,N).
+creat([],N,N).
 
-# Question 1.2
-sum_with_reduce = reduce(operator.add, mapped_tuple, 0)
-
-# Question 1.3
-def time_fn(fn, repeats=5):
-    times = []
-    for _ in range(repeats):
-        t0 = time.perf_counter()
-        res = fn()
-        t1 = time.perf_counter()
-        times.append((t1 - t0, res))
-    avg = sum(t for t, _ in times) / repeats
-    return avg, times[-1][1]
-
-# Question 1.4
-def reduce_compute_and_sum():
-    return reduce(lambda acc, x: acc + (2 + 2 * x), nums, 0)
-
-# Question 2
-nums = list(range(1, 1001))
-# 1
-evens = list(filter(lambda x: x % 2 == 0, nums))
-odds  = list(filter(lambda x: x % 2 != 0, nums))
-
-even_func = lambda seq: reduce(lambda acc, x: acc + [acc[-1] * x], seq[1:], [seq[0]])
-
-odd_func = lambda seq: reduce(
-    lambda acc, i: acc + [acc[-1] + (seq[i+1] / 2 + 2 + acc[-1])] if i+1 < len(seq) else acc,
-    range(len(seq)),
-    [seq[0]]
-)
-# 2 
-even_result = even_func(evens)
-odd_result  = odd_func(odds)
-
-# 3
-sum_evens = reduce(lambda a, b: a + b, even_result)
-sum_odds  = reduce(lambda a, b: a + b, odd_result)
-
-# Question 3 
-
-def new_dates(start_date_str, count, step):
-    start = int(start_date_str)
-    indices = range(count)
+inter(L1,L2,Z):-
+    inter(L1,L2,[],Z).
+inter([X1|Y],L2,RES,Z):-
+    in(X1,L2),
+    inter(Y,L2,[X1|RES],Z).
+inter([X1|Y],L2,RES,Z):-
+    not(in(X1,L2)),
+    inter(Y,L2,RES,Z).
+inter([],_,X,X).
+in(X,[X1|_]):-
+    X=:=X1.
+in(X,[_|X2]):-
+    in(X,X2).    
     
-    return list(map(lambda i: str(start + i*step), indices))
+minus(L1,L2,Z):-
+    minus(L1,L2,[],Z).
+minus([X1|Y1],L2,RES,Z):-
+    not(in(X1,L2)),
+    minus(Y1,L2,[X1|RES],Z).
+minus([],_,X,X).
+minus([X1|Y1],L2,RES,Z):-
+    in(X1,L2),
+    minus(Y1,L2,RES,Z).
 
-# Question 4.a
-def power_function(exp):
-    return lambda base: base ** exp
 
-# Question 4.b
-def make_powers(n):
-    return lambda base: map(lambda exp: base ** exp, range(1, n + 1))
+schum(N,Res):-
+   schum(N,0,Res).
+schum(0,X,X).
+schum(N,R,Res):-
+    R1 is R+N,
+    N1 is N-1,
+    schum(N1,R1,Res).
 
-n = int(input("Enter number of powers: "))
-result = make_powers(n)
-
-print(type(result(1)))
-
-base = int(input("Enter base: "))
-print(tuple(result(base)))
-
-# Question 4.c
-def taylor_exp(x, n):
-    return reduce(
-        lambda acc, k: acc + (x**k) / math.factorial(k),
-        range(n+1),
-        0
-    )
-
-# Question 5
-def task_manager():
-    tasks = {}
-
-    def add_task(name, status="incomplete"):
-        tasks[name] = status
-
-    def complete_task(name):
-        if name in tasks:
-            tasks[name] = "complete"
-
-    def get_tasks():
-        return tasks.copy()  # אני בכוונה מחזירה העתק כדי שלא ישתנה מבחוץ
-
-    return {
-        "add_task": add_task,
-        "complete_task": complete_task,
-        "get_tasks": get_tasks
-    }
+sumd(N,RES):-
+    sumd(N,0,RES).
+sumd(0,X,X).
+sumd(N,R,RES):-
+    N1 is mod(N,10),
+    N2 is N//10,
+    R1 is R+N1,
+    sumd(N2,R1,RES)
